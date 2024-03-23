@@ -8,3 +8,10 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('title', 'content')
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('post', 'text', 'email')
+    list_filter = ('post',)
+    search_fields = ('text', 'email')
