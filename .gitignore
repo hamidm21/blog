@@ -1,0 +1,22 @@
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore Django migration files
+*.py[cod]
+*/migrations/
+*.sqlite3
+
+# Ignore environment-specific settings
+.env
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore any local files or directories specific to your development setup
+# Add more entries here as needed based on your setup
+/local/
+/.vscode/
+/.idea/
+
