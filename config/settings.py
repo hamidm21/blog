@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # 3rd party
     'blog',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
