@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer, PostUpdateSerializer
 
@@ -25,3 +25,8 @@ class CommentCreateAPIView(generics.CreateAPIView):
 class PostUpdateAPIView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostUpdateSerializer
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
