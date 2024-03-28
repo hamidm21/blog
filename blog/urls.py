@@ -1,6 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import PostListAPIView, CommentListAPIView, PostRetrieveAPIView, PostCreateAPIView, CommentCreateAPIView, PostUpdateAPIView, PostViewSet
+from .views import api
 
 router = DefaultRouter()
 router.register(r'articles', PostViewSet)
@@ -15,3 +16,7 @@ urlpatterns = [
 ]
 
 urlpatterns += router.urls
+
+urlpatterns += [
+    path('ninja/', api.urls),
+]
