@@ -1,45 +1,53 @@
-from rest_framework import generics, viewsets
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer, PostUpdateSerializer
-from ninja import NinjaAPI, Schema
 from typing import List
-from ninja.errors import HttpError
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from ninja import NinjaAPI, Schema
+from rest_framework import generics, permissions, viewsets
+
+from .models import Comment, Post
+from .serializers import (CommentSerializer, PostSerializer,
+                          PostUpdateSerializer)
 
 
 # APIs Developed with Django Rest Framework
-
 class PostListAPIView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class CommentListAPIView(generics.ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PostRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PostCreateAPIView(generics.CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class CommentCreateAPIView(generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PostUpdateAPIView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # APIs Developed with Django Ninja
-
 api = NinjaAPI()
 
 class PostOutSchema(Schema):
@@ -57,16 +65,19 @@ class CommentSchema(Schema):
     email: str
 
 @api.get('/posts', response=List[PostOutSchema], tags=['posts'], description="List all posts")
+@login_required()
 def list_posts(request):
     queryset = Post.objects.all()
     return queryset
 
 @api.get("/comments", response=List[CommentSchema], tags=['comments'], description="List all comments")
+@login_required
 def list_comments(request):
     queryset = Comment.objects.all()
     return queryset
 
 @api.post("/posts", tags=['posts'])
+@login_required
 def create_post(request, payload: PostInSchema):
     """
     To create a post please provide:
@@ -77,6 +88,7 @@ def create_post(request, payload: PostInSchema):
     return {"id": post.id}
 
 @api.post("/comments", tags=['comments'])
+@login_required
 def create_comment(request, payload: CommentSchema):
     """
     To create a comment please provide:
@@ -88,6 +100,7 @@ def create_comment(request, payload: CommentSchema):
     return {"id": comment.id}
 
 @api.put("/posts/{int:post_id}", tags=['posts'])
+@login_required
 def update_post(request, post_id: int, payload: PostInSchema):
     """
     To update a post please provide:
@@ -103,11 +116,13 @@ def update_post(request, post_id: int, payload: PostInSchema):
     return {"success": True}
 
 @api.get("/posts/{int:post_id}", response=PostOutSchema, tags=['posts'], description="Get a post")
+@login_required
 def get_post(request, post_id: int):
     post = get_object_or_404(Post, id=post_id)
     return post
 
 @api.delete("/posts/{int:post_id}", tags=['posts'], description="Delete a post")
+@login_required
 def delete_post(request, post_id: int):
     post = get_object_or_404(Post, id=post_id)
     post.delete()
