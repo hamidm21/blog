@@ -2,6 +2,10 @@ from django.test import TestCase
 from .factories import CommentFactory, PostFactory
 from .models import Comment, Post
 from .serializers import CommentSerializer, PostSerializer, PostUpdateSerializer
+from rest_framework.test import APIClient
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+
 
 class PostModelTestCase(TestCase):
     def test_post_creation(self):
@@ -43,6 +47,10 @@ class PostViewTestCase(TestCase):
     def setUp(self):
         self.post_data = {"title": "Test Post", "content": "This is a test post."}
         self.post = Post.objects.create(title=self.post_data['title'], content=self.post_data['content'])
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
     
     def test_post_list(self):
         response = self.client.get('/api/posts/')
@@ -66,7 +74,7 @@ class PostViewTestCase(TestCase):
     def test_post_update(self):
         serializer = PostUpdateSerializer(instance=self.post, data=self.post_data)
         self.assertTrue(serializer.is_valid())
-        response = self.client.put(f'/api/posts/{self.post.id}/update/', data=self.post_data, content_type='application/json')
+        response = self.client.put(f'/api/posts/{self.post.id}/update/', data=self.post_data)
         self.assertEqual(response.status_code, 200)
 
 class CommentViewTestCase(TestCase):
@@ -75,6 +83,10 @@ class CommentViewTestCase(TestCase):
         self.post = Post.objects.create(title=self.post_data['title'], content=self.post_data['content'])
         self.comment_data = {"post": self.post.id, "text": "Test comment", "email": "test@example.com"}
         self.comment = Comment.objects.create(post=self.post, text=self.comment_data['text'], email=self.comment_data['email'])
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
     
     def test_comment_list(self):
         response = self.client.get('/api/comments/')
@@ -95,6 +107,11 @@ class PostViewSetTestCase(TestCase):
     def setUp(self):
         self.post_data = {"title": "Test Post", "content": "This is a test post."}
         self.post = Post.objects.create(title=self.post_data['title'], content=self.post_data['content'])
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
     
     def test_post_list(self):
         response = self.client.get('/api/articles/')
@@ -118,7 +135,7 @@ class PostViewSetTestCase(TestCase):
     def test_post_update(self):
         serializer = PostUpdateSerializer(instance=self.post, data=self.post_data)
         self.assertTrue(serializer.is_valid())
-        response = self.client.put(f'/api/articles/{self.post.id}/', data=self.post_data, content_type='application/json')
+        response = self.client.put(f'/api/articles/{self.post.id}/', data=self.post_data)
         self.assertEqual(response.status_code, 200)
 
 
