@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      Debug: ${{ secrets.DEBUG }}
+      DEBUG: ${{ secrets.DEBUG }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
