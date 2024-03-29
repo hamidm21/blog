@@ -14,5 +14,8 @@ COPY . /code/
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run app.py when the container launches
+# Install Redis
+RUN apt-get update && apt-get install -y redis-server
+
+# Run the Django application
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
